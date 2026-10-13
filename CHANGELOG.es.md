@@ -15,6 +15,7 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 - Botón **Desactivar todo** con contador en vivo de trucos activos.
 - Botón **Aplicar** con confirmación *Aplicado* para acciones de un solo uso (Dinero infinito), en lugar de un interruptor que nunca quedaba activo.
 - Banner que explica qué hacer mientras no se detecta el juego.
+- **Metadatos del ejecutable de Windows:** icono de la aplicación (`assets/icon.ico`), información de versión (nombre del producto, versión 1.0.0, descripción, copyright) y manifiesto de aplicación (`asInvoker`, Windows 10/11, DPI por monitor) incrustados con `winresource`. La ventana también usa `assets/icon.png`.
 - Documentación en inglés (`README.md`, `CHANGELOG.md`) y español (`README.es.md`, `CHANGELOG.es.md`).
 
 ### Cambiado
@@ -24,6 +25,9 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 - Las opciones de trucos quedan deshabilitadas hasta que el juego esté conectado, con un tooltip que explica el motivo.
 - El estado de `steam_emu.ini` se lee una vez por segundo en lugar de en cada frame, y los errores al alternarlo ahora se muestran al usuario.
 - Tamaño de ventana por defecto aumentado a 600×820.
+- El CI ahora compila en `windows-latest` con la toolchain MSVC (`x86_64-pc-windows-msvc`) y runtime de C estático, en lugar de compilación cruzada con MinGW. Esto reduce los falsos positivos heurísticos de los antivirus.
+- Las builds de release ya no abren una ventana de consola junto al trainer.
+- Versión del crate fijada en `1.0.0` para coincidir con la versión publicada.
 
 ### Corregido
 - La tabla de atajos del README ahora coincide con los atajos realmente asignados en el catálogo.

@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) 
 - **Turn all off** button with a live counter of active cheats.
 - **Apply** button with *Applied* confirmation for one-shot actions (Infinite Money), instead of a switch that never stayed on.
 - Banner explaining what to do while the game is not detected.
+- **Windows executable metadata:** application icon (`assets/icon.ico`), version information (product name, version 1.0.0, description, copyright) and an application manifest (`asInvoker`, Windows 10/11, per-monitor DPI) embedded with `winresource`. The window also uses `assets/icon.png`.
 - Documentation in English (`README.md`, `CHANGELOG.md`) and Spanish (`README.es.md`, `CHANGELOG.es.md`).
 
 ### Changed
@@ -24,6 +25,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) 
 - Cheat options are disabled until the game is connected, with a tooltip explaining why.
 - `steam_emu.ini` status is read once per second instead of on every frame, and toggle errors are now shown to the user.
 - Default window size increased to 600×820.
+- CI now builds on `windows-latest` with the MSVC toolchain (`x86_64-pc-windows-msvc`) and a static C runtime, instead of cross-compiling with MinGW. This reduces heuristic antivirus false positives.
+- Release builds no longer open a console window next to the trainer.
+- Crate version set to `1.0.0` to match the released version.
 
 ### Fixed
 - The README hotkey table now matches the hotkeys actually assigned in the catalog.

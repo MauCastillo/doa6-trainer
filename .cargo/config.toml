@@ -1,0 +1,3 @@
+# Runtime de C estático en MSVC: el .exe no necesita el Visual C++ Redistributable instalado.
+[target.x86_64-pc-windows-msvc]
+rustflags = ["-C", "target-feature=+crt-static"]

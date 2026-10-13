@@ -15,6 +15,9 @@ Obtén el binario precompilado `doa6-trainer.exe` desde GitHub:
 1. **Releases de GitHub (recomendado):** abre **[Releases](https://github.com/MauCastillo/doa6-trainer/releases)** y descarga `doa6-trainer.exe` de la última versión estable.
 2. **Artefactos de GitHub Actions:** cada commit a `master` se compila automáticamente. Abre la pestaña **Actions**, elige la última ejecución de `Build & Release Artifacts` y descarga **`doa6-trainer-windows-x64.zip`**.
 
+> [!NOTE]
+> **Avisos del antivirus:** un trainer lee y escribe la memoria de otro proceso (`OpenProcess`, `VirtualAllocEx`, `WriteProcessMemory`), las mismas técnicas que usa algún malware, por lo que unos pocos motores basados en reputación pueden marcar las builds nuevas (por ejemplo, McAfee `Ti!<hash>` o Bkav `W32.Malware`). Todo el código fuente está en este repositorio y puedes compilarlo tú mismo.
+
 ---
 
 ## La Interfaz
@@ -216,6 +219,7 @@ src/
 │   ├── settings.rs    # Preferencias guardadas del usuario (idioma)
 │   ├── theme.rs       # Tokens de diseño: colores, radios, tamaños de texto
 │   └── widgets.rs     # Interruptor, botón de ayuda "?", chip de atajo, indicador de estado
+├── build.rs           # (raíz del proyecto) incrusta icono, versión y manifiesto en el .exe
 ├── lib.rs             # Exportación pública de módulos
 └── main.rs            # Punto de entrada y arranque de eframe
 ```

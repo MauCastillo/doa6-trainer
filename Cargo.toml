@@ -1,6 +1,6 @@
 [package]
 name = "doa6-trainer"
-version = "0.1.0"
+version = "1.0.0"
 edition = "2024"
 description = "Dead or Alive 6 trainer (v1.0-v1.20 and Last Round) with a bilingual graphical interface"
 
@@ -22,3 +22,6 @@ windows = { version = "0.62.2", features = [
 [profile.release]
 lto = true
 strip = true
+
+[build-dependencies]
+winresource = "0.1.34"

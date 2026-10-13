@@ -13,8 +13,8 @@ permissions:
 
 jobs:
   build-windows:
-    name: Build Windows x64 Binary
-    runs-on: ubuntu-latest
+    name: Build Windows x64 Binary (MSVC)
+    runs-on: windows-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -22,24 +22,19 @@ jobs:
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
-          targets: x86_64-pc-windows-gnu
-
-      - name: Install MinGW cross-compiler
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y gcc-mingw-w64-x86-64
+          targets: x86_64-pc-windows-msvc
 
       - name: Run unit tests
         run: cargo test --lib --verbose
 
       - name: Build Windows release binary
-        run: cargo build --release --target x86_64-pc-windows-gnu
+        run: cargo build --release --target x86_64-pc-windows-msvc
 
       - name: Upload artifact to GitHub Actions
         uses: actions/upload-artifact@v4
         with:
           name: doa6-trainer-windows-x64
-          path: target/x86_64-pc-windows-gnu/release/doa6-trainer.exe
+          path: target/x86_64-pc-windows-msvc/release/doa6-trainer.exe
           if-no-files-found: error
           retention-days: 30
 
@@ -47,5 +42,5 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-          files: target/x86_64-pc-windows-gnu/release/doa6-trainer.exe
+          files: target/x86_64-pc-windows-msvc/release/doa6-trainer.exe
           body_path: CHANGELOG.md

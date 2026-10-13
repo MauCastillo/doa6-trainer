@@ -1,3 +1,6 @@
+// Sin ventana de consola en Windows (las builds de depuración la mantienen para ver logs)
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+
 use eframe::egui::Vec2;
 
 use doa6_trainer::application::controller::Controller;
@@ -14,11 +17,19 @@ fn main() -> eframe::Result<()> {
     let hotkeys = default_hotkey_listener();
     controller.start(finder, hotkeys, || {});
 
+    let icon_data = eframe::icon_data::from_png_bytes(include_bytes!("../assets/icon.png")).ok();
+
+    let mut viewport = eframe::egui::ViewportBuilder::default()
+        .with_inner_size(Vec2::new(600.0, 820.0))
+        .with_min_inner_size(Vec2::new(520.0, 560.0))
+        .with_title(APP_NAME);
+
+    if let Some(icon) = icon_data {
+        viewport = viewport.with_icon(icon);
+    }
+
     let native_options = eframe::NativeOptions {
-        viewport: eframe::egui::ViewportBuilder::default()
-            .with_inner_size(Vec2::new(600.0, 820.0))
-            .with_min_inner_size(Vec2::new(520.0, 560.0))
-            .with_title(APP_NAME),
+        viewport,
         ..Default::default()
     };
 
