@@ -111,8 +111,6 @@ impl SteamEmu {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-
     #[test]
     fn parses_dlc_unlock_all() {
         let sample = "[DLC]\nDLCUnlockall=1\n";
