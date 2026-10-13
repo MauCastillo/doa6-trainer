@@ -45,6 +45,14 @@ impl LocatedPatch {
         self.cave_block
     }
 
+    pub fn address(&self) -> u64 {
+        self.address
+    }
+
+    pub fn original(&self) -> &[u8] {
+        &self.original
+    }
+
     /// Prueba cada variante del parche hasta encontrar una.
     pub fn locate(memory: &dyn GameMemory, patch: &Patch) -> Result<Option<Self>, TrainerError> {
         for variant in &patch.variants {
