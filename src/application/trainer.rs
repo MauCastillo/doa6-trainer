@@ -69,7 +69,7 @@ impl Trainer {
             Effect::HookFlag { hook, block_offset, on_value, exclusive_with } => {
                 session.toggle_flag(catalog, id, *hook, *block_offset, *on_value, *exclusive_with)
             }
-            Effect::SetValue { pointer, value } => session.set_value(id, pointer, *value),
+            Effect::SetValue { pointers, value } => session.set_value(id, pointers, *value),
         }
     }
 }
@@ -80,7 +80,7 @@ struct Session {
     /// En orden de instalación, para desinstalar en orden inverso.
     hooks: Vec<(HookId, LocatedPatch)>,
     patches: HashMap<CheatId, Vec<LocatedPatch>>,
-    pointers: HashMap<CheatId, u64>,
+    pointers: HashMap<CheatId, (u64, u64)>,
     active: HashSet<CheatId>,
 }
 
@@ -154,20 +154,32 @@ impl Session {
         Ok(CheatOutcome::Enabled)
     }
 
-    fn set_value(&mut self, id: CheatId, pointer: &RipRelativePointer, value: u32) -> Result<CheatOutcome, TrainerError> {
-        let static_address = match self.pointers.get(&id) {
-            Some(address) => *address,
+    fn set_value(
+        &mut self,
+        id: CheatId,
+        pointers: &[RipRelativePointer],
+        value: u32,
+    ) -> Result<CheatOutcome, TrainerError> {
+        let (static_address, target_offset) = match self.pointers.get(&id) {
+            Some((address, offset)) => (*address, *offset),
             None => {
-                let address = resolve_static_pointer(self.memory.as_ref(), id, pointer)?;
-                self.pointers.insert(id, address);
-                address
+                let mut found = None;
+                for ptr in pointers {
+                    if let Ok(address) = resolve_static_pointer(self.memory.as_ref(), id, ptr) {
+                        found = Some((address, ptr.target_offset));
+                        break;
+                    }
+                }
+                let (address, offset) = found.ok_or(TrainerError::SignatureNotFound(id.0))?;
+                self.pointers.insert(id, (address, offset));
+                (address, offset)
             }
         };
         let target = read_u64(self.memory.as_ref(), static_address)?;
         if target == 0 {
             return Err(TrainerError::ValueNotReady);
         }
-        self.memory.write(target, &value.to_le_bytes())?;
+        self.memory.write(target + target_offset, &value.to_le_bytes())?;
         Ok(CheatOutcome::Applied)
     }
 
@@ -340,11 +352,12 @@ mod tests {
                 cheat(
                     "money",
                     Effect::SetValue {
-                        pointer: RipRelativePointer {
+                        pointers: vec![RipRelativePointer {
                             signature: Signature::parse("48 8B 15 * * * * AB").unwrap(),
                             displacement_offset: 3,
                             instruction_len: 7,
-                        },
+                            target_offset: 0,
+                        }],
                         value: 99_999_999,
                     },
                 ),

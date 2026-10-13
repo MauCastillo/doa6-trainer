@@ -4,6 +4,7 @@ pub mod controller;
 pub mod error;
 pub mod patcher;
 pub mod ports;
+pub mod steam_emu;
 pub mod trainer;
 
 #[cfg(test)]

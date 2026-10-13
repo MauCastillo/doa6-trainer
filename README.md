@@ -1,7 +1,7 @@
 # DOA6 Trainer (Rust)
 
-Reescritura en Rust del trainer de FLiNG para **Dead or Alive 6 v1.0–v1.20** (16 trucos), con interfaz gráfica `egui`.
-Se ejecuta en Windows 10/11 x64.
+Reescritura en Rust del trainer de FLiNG para **Dead or Alive 6 (v1.0–v1.20 y Dead or Alive 6 Last Round / DOA6LR.exe)** con 16 trucos en tiempo de ejecución, desbloqueo persistente de DLCs y gui `egui`.
+Se ejecuta en Windows 10/11 x64 y bajo Wine/Proton en Lutris.
 
 ## Compilar
 

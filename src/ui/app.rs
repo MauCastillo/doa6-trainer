@@ -5,6 +5,7 @@ use std::time::Duration;
 use eframe::egui::{self, Color32, CornerRadius, Frame, Margin, RichText, Stroke, Vec2};
 
 use crate::application::controller::{Controller, TrainerSnapshot};
+use crate::application::steam_emu::{SteamEmu, SteamEmuStatus};
 use crate::domain::cheat::{Cheat, CheatId, Hotkey};
 
 pub struct TrainerApp {
@@ -81,6 +82,8 @@ impl eframe::App for TrainerApp {
                             "Desbloqueables y Economía",
                             &["C1", "3", "C2", "C3", "C4", "C5", "C6"],
                         );
+
+                        render_persistent_section(ui);
 
                         ui.add_space(8.0);
                         ui.vertical_centered(|ui| {
@@ -285,4 +288,95 @@ fn format_hotkey(hotkey: Hotkey) -> String {
     } else {
         format!("Num {}", hotkey.numpad)
     }
+}
+
+fn render_persistent_section(ui: &mut egui::Ui) {
+    ui.add_space(4.0);
+    ui.label(
+        RichText::new("Opciones Persistentes (Archivos / Disco)")
+            .size(14.0)
+            .strong()
+            .color(Color32::from_rgb(170, 170, 220)),
+    );
+
+    Frame::default()
+        .fill(Color32::from_rgb(24, 25, 34))
+        .stroke(Stroke::new(1.0, Color32::from_rgb(45, 47, 62)))
+        .corner_radius(CornerRadius::same(8))
+        .inner_margin(Margin::same(8))
+        .show(ui, |ui| {
+            ui.horizontal(|ui| {
+                Frame::default()
+                    .fill(Color32::from_rgb(34, 36, 48))
+                    .stroke(Stroke::new(1.0, Color32::from_rgb(60, 64, 85)))
+                    .corner_radius(CornerRadius::same(4))
+                    .inner_margin(Margin::symmetric(6, 3))
+                    .show(ui, |ui| {
+                        ui.label(
+                            RichText::new("DISCO")
+                                .size(11.0)
+                                .monospace()
+                                .color(Color32::from_rgb(200, 210, 240)),
+                        );
+                    });
+
+                ui.vertical(|ui| {
+                    ui.label(
+                        RichText::new("Desbloquear todos los DLCs y Personajes")
+                            .size(13.0)
+                            .color(Color32::from_rgb(235, 235, 245)),
+                    );
+                    ui.label(
+                        RichText::new("steam_emu.ini • Mai, Kula, Momiji, Rachel, trajes y modos")
+                            .size(10.0)
+                            .color(Color32::from_rgb(140, 140, 160)),
+                    );
+                });
+
+                ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                    let status = SteamEmu::status();
+                    match status {
+                        SteamEmuStatus::Unlocked(_) => {
+                            let button = egui::Button::new(
+                                RichText::new("ACTIVADO")
+                                    .size(11.0)
+                                    .strong()
+                                    .color(Color32::WHITE),
+                            )
+                            .fill(Color32::from_rgb(40, 130, 70))
+                            .min_size(Vec2::new(75.0, 24.0));
+                            if ui.add(button).clicked() {
+                                let _ = SteamEmu::toggle();
+                            }
+                        }
+                        SteamEmuStatus::Locked(_) => {
+                            let button = egui::Button::new(
+                                RichText::new("DESACTIVADO")
+                                    .size(11.0)
+                                    .color(Color32::from_rgb(160, 165, 185)),
+                            )
+                            .fill(Color32::from_rgb(38, 40, 52))
+                            .min_size(Vec2::new(75.0, 24.0));
+                            if ui.add(button).clicked() {
+                                let _ = SteamEmu::toggle();
+                            }
+                        }
+                        SteamEmuStatus::NotFound => {
+                            ui.label(
+                                RichText::new("No detectado")
+                                    .size(10.0)
+                                    .color(Color32::from_rgb(160, 140, 100)),
+                            );
+                        }
+                    }
+                });
+            });
+
+            ui.add_space(4.0);
+            ui.label(
+                RichText::new("💡 Consejo: Al activar Dinero infinito (Ctrl+Num 1), las compras en el armario se guardan para siempre en SYSTEMDATA.")
+                    .size(10.5)
+                    .color(Color32::from_rgb(130, 150, 180)),
+            );
+        });
 }

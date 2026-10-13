@@ -96,6 +96,7 @@ pub struct RipRelativePointer {
     pub signature: Signature,
     pub displacement_offset: usize,
     pub instruction_len: usize,
+    pub target_offset: u64,
 }
 
 #[derive(Debug, Clone)]
@@ -110,8 +111,8 @@ pub enum Effect {
         /// Truco que comparte la misma variable y se desactiva al activar este.
         exclusive_with: Option<CheatId>,
     },
-    /// Escritura puntual a través de un puntero estático.
-    SetValue { pointer: RipRelativePointer, value: u32 },
+    /// Escritura puntual a través de un puntero estático (soporta variantes de versión).
+    SetValue { pointers: Vec<RipRelativePointer>, value: u32 },
 }
 
 impl Effect {

@@ -48,12 +48,22 @@ fn hooks() -> Vec<Hook> {
             requires: vec![PLAYER],
             patch: required(
                 "one_hit_ko",
-                vec![cave(
-                    "66 2B CA 66 3B C1 66 0F 42 C8 66 89 8E * * 00 00",
-                    0,
-                    "66 2B CA 66 3B C1",
-                    "83 3D F9 01 00 00 01 75 1A 50 48 A1 $player 48 39 F0 74 09 66 83 FA 00 7E 03 66 89 D1 58 66 29 D1 66 39 C8",
-                )],
+                vec![
+                    // DOA6 v1.0 - v1.20
+                    cave(
+                        "66 2B CA 66 3B C1 66 0F 42 C8 66 89 8E * * 00 00",
+                        0,
+                        "66 2B CA 66 3B C1",
+                        "83 3D F9 01 00 00 01 75 1A 50 48 A1 $player 48 39 F0 74 09 66 83 FA 00 7E 03 66 89 D1 58 66 29 D1 66 39 C8",
+                    ),
+                    // DOA6 Last Round (DOA6LR.exe)
+                    cave(
+                        "0F B7 C7 66 2B C1 0F B7 8D 82 05 00 00 66 89 85 80 05 00 00",
+                        0,
+                        "0F B7 C7 66 2B C1",
+                        "0F B7 C7 66 2B C1 83 3D F3 01 00 00 01 75 18 51 89 C1 48 A1 $player 48 39 C5 89 C8 59 74 03 66 31 C0",
+                    ),
+                ],
             ),
             exports: vec![],
         },
@@ -63,13 +73,23 @@ fn hooks() -> Vec<Hook> {
             // Flag +0x200: llenar la barra del jugador. Flag +0x204: vaciar la del rival.
             patch: required(
                 "break_gauge",
-                vec![cave(
-                    "83 7F 18 02 89 4F 20 75 * 85 * 7E",
-                    0,
-                    "83 7F 18 02 89 4F 20",
-                    "50 48 A1 $player 48 39 47 08 75 13 83 3D E8 01 00 00 01 75 15 3B 4F 20 7E 10 8B 4F 1C EB 0B \
-                     83 3D D9 01 00 00 01 75 02 31 C9 89 4F 20 58 83 7F 18 02",
-                )],
+                vec![
+                    // DOA6 v1.0 - v1.20
+                    cave(
+                        "83 7F 18 02 89 4F 20 75 * 85 * 7E",
+                        0,
+                        "83 7F 18 02 89 4F 20",
+                        "50 48 A1 $player 48 39 47 08 75 13 83 3D E8 01 00 00 01 75 15 3B 4F 20 7E 10 8B 4F 1C EB 0B \
+                         83 3D D9 01 00 00 01 75 02 31 C9 89 4F 20 58 83 7F 18 02",
+                    ),
+                    // DOA6 Last Round (DOA6LR.exe)
+                    cave(
+                        "48 8B 46 08 89 88 B4 05 00 00 48 8B 46 08 38 56",
+                        0,
+                        "48 8B 46 08 89 88 B4 05 00 00",
+                        "48 8B 46 08 50 48 A1 $player 48 39 46 08 58 75 11 83 3D E3 01 00 00 01 75 16 8B 4E 1C 89 4E 20 EB 0E 83 3D D6 01 00 00 01 75 05 31 C9 89 4E 20 89 88 B4 05 00 00",
+                    ),
+                ],
             ),
             exports: vec![],
         },
@@ -77,7 +97,7 @@ fn hooks() -> Vec<Hook> {
             id: GAME_SPEED,
             requires: vec![],
             // Si el flag es distinto de 0, se usa como multiplicador (float) de velocidad.
-            patch: required(
+            patch: optional(
                 "game_speed",
                 vec![cave(
                     "41 8B 8E s1 00 00 41 89 * C7 44 24 * 01 00 00 00 * D2",
@@ -112,6 +132,7 @@ fn cheats() -> Vec<Cheat> {
             effect: Effect::TogglePatches(vec![required(
                 "costumes",
                 vec![
+                    // DOA6 v1.0 - v1.20
                     replace(
                         "48 03 C3 F6 00 1A 0F 95 C0 48 83 C4 * * C3 48 05 20 4E 00 00 F6 00 1A",
                         0,
@@ -123,6 +144,19 @@ fn cheats() -> Vec<Cheat> {
                         0,
                         "48 03 C3 F6 00 0A",
                         "48 85 C0 90 90 90",
+                    ),
+                    // DOA6 Last Round (DOA6LR.exe)
+                    replace(
+                        "B8 20 4E 00 00 48 3B C8 48 0F 43 C8 F6 04 19 1A 48 8B 5C 24 30 0F 95 C0",
+                        21,
+                        "0F 95 C0",
+                        "B0 01 90",
+                    ),
+                    replace(
+                        "B8 20 4E 00 00 48 3B C8 48 0F 43 C8 F6 04 19 1B 48 8B 5C 24 30 0F 95 C0",
+                        21,
+                        "0F 95 C0",
+                        "B0 01 90",
                     ),
                 ],
             )]),
@@ -171,7 +205,7 @@ fn cheats() -> Vec<Cheat> {
                         ),
                     ],
                 ),
-                required(
+                optional(
                     "timer_rate",
                     vec![cave(
                         "F3 0F 10 49 14 F3 48 0F 2A C0 F3 0F 5E C8 0F 57 C0 F3 0F 58 8B * * 00 00",
@@ -196,14 +230,22 @@ fn cheats() -> Vec<Cheat> {
                         "48 8D 83 s1 00 00 C7 40 08 FF E0 F5 05 48 31 C0",
                     )],
                 ),
-                required(
+                optional(
                     "score_total",
-                    vec![cave(
-                        "48 01 81 s1 00 00 48 C7 81 * * 00 00 00 00 00 00 49 * * 8B 41 10",
-                        0,
-                        "48 01 81 s1 00 00",
-                        "C7 81 s1 00 00 FF E0 F5 05",
-                    )],
+                    vec![
+                        cave(
+                            "48 01 81 s1 00 00 48 C7 81 * * 00 00 00 00 00 00 49 * * 8B 41 10",
+                            0,
+                            "48 01 81 s1 00 00",
+                            "C7 81 s1 00 00 FF E0 F5 05",
+                        ),
+                        cave(
+                            "8B 40 08 48 01 83 30 01 00 00 48 8B 5C 24 30",
+                            3,
+                            "48 01 83 30 01 00 00",
+                            "C7 83 30 01 00 00 FF E0 F5 05",
+                        ),
+                    ],
                 ),
             ]),
         },
@@ -236,11 +278,22 @@ fn cheats() -> Vec<Cheat> {
             hotkey: Hotkey::ctrl_numpad(1),
             name: text("Dinero infinito", "Infinite Money"),
             effect: Effect::SetValue {
-                pointer: RipRelativePointer {
-                    signature: signature("48 8B 15 * * * * B8 * * 00 00 * 3B * 48 0F 42 * F6 84 02 * * * * 02"),
-                    displacement_offset: 3,
-                    instruction_len: 7,
-                },
+                pointers: vec![
+                    // DOA6 v1.0 - v1.20
+                    RipRelativePointer {
+                        signature: signature("48 8B 15 * * * * B8 * * 00 00 * 3B * 48 0F 42 * F6 84 02 * * * * 02"),
+                        displacement_offset: 3,
+                        instruction_len: 7,
+                        target_offset: 0,
+                    },
+                    // DOA6 Last Round (DOA6LR.exe)
+                    RipRelativePointer {
+                        signature: signature("48 8B 05 * * * * C7 80 0C 7F 01 00 20 B2 17 03 48 8B 4C"),
+                        displacement_offset: 3,
+                        instruction_len: 7,
+                        target_offset: 0x8CB8,
+                    },
+                ],
                 value: MAX_MONEY,
             },
         },
@@ -251,16 +304,32 @@ fn cheats() -> Vec<Cheat> {
             effect: Effect::TogglePatches(vec![
                 required(
                     "hairstyles",
-                    vec![replace("EB 06 48 05 E8 03 00 00 F6 00 0A", 8, "F6 00 0A", "48 85 C0")],
+                    vec![
+                        replace("EB 06 48 05 E8 03 00 00 F6 00 0A", 8, "F6 00 0A", "48 85 C0"),
+                        replace(
+                            "B8 20 4E 00 00 48 3B C8 48 0F 43 C8 0F B6 84 39 69 17 00 00 C0 E8 02 24 01",
+                            20,
+                            "C0 E8 02 24 01",
+                            "B0 01 90 90 90",
+                        ),
+                    ],
                 ),
                 optional(
                     "hairstyles_menu",
-                    vec![replace(
-                        "B8 E8 03 00 00 * * * * * * * F6 04 01 0A 0F 84 * * 00 00",
-                        12,
-                        "F6 04 01 0A",
-                        "48 85 C0 90",
-                    )],
+                    vec![
+                        replace(
+                            "B8 E8 03 00 00 * * * * * * * F6 04 01 0A 0F 84 * * 00 00",
+                            12,
+                            "F6 04 01 0A",
+                            "48 85 C0 90",
+                        ),
+                        replace(
+                            "B8 E8 03 00 00 48 3B C8 48 0F 43 C8 0F B6 84 39 8A 65 00 00 C0 E8 02 24 01",
+                            20,
+                            "C0 E8 02 24 01",
+                            "B0 01 90 90 90",
+                        ),
+                    ],
                 ),
             ]),
         },
@@ -270,41 +339,60 @@ fn cheats() -> Vec<Cheat> {
             name: text("Desbloquear todas las gafas", "Unlock All Glasses"),
             effect: Effect::TogglePatches(vec![required(
                 "glasses",
-                vec![replace("48 05 40 1F 00 00 F6 00 0A 75 * 40 84 * 75 * * C0", 6, "F6 00 0A", "48 85 C0")],
+                vec![
+                    replace("48 05 40 1F 00 00 F6 00 0A 75 * 40 84 * 75 * * C0", 6, "F6 00 0A", "48 85 C0"),
+                    replace(
+                        "B8 40 1F 00 00 48 3B C8 48 0F 43 C8 0F B6 84 39 73 69 00 00 C0 E8 02 24 01",
+                        20,
+                        "C0 E8 02 24 01",
+                        "B0 01 90 90 90",
+                    ),
+                ],
             )]),
         },
         Cheat {
             id: CheatId("C4"),
             hotkey: Hotkey::ctrl_numpad(4),
             name: text("Desbloquear toda la música", "Unlock All Music"),
-            effect: unlock_flag_patch("music", "66 13"),
+            effect: unlock_flag_patch("music", "66 13", "E2 13"),
         },
         Cheat {
             id: CheatId("C5"),
             hotkey: Hotkey::ctrl_numpad(5),
             name: text("Desbloquear toda la enciclopedia", "Unlock All Encyclopedia"),
-            effect: unlock_flag_patch("encyclopedia", "C0 15"),
+            effect: unlock_flag_patch("encyclopedia", "C0 15", "3C 16"),
         },
         Cheat {
             id: CheatId("C6"),
             hotkey: Hotkey::ctrl_numpad(6),
             name: text("Desbloquear todas las curiosidades", "Unlock All Trivia"),
-            effect: unlock_flag_patch("trivia", "93 14"),
+            effect: unlock_flag_patch("trivia", "93 14", "0F 15"),
         },
     ]
 }
 
-/// `movzx edx, byte [rax+rcx+X]` → `mov edx, 1`: el juego lee "desbloqueado" siempre.
-fn unlock_flag_patch(name: &'static str, table_offset: &str) -> Effect {
-    let original = format!("0F B6 94 08 {table_offset} 00 00");
+/// Permite leer siempre como "desbloqueado" el elemento consultado.
+/// Soporta tanto DOA6 v1.0-v1.20 como DOA6 Last Round (DOA6LR.exe).
+fn unlock_flag_patch(name: &'static str, v1_offset: &str, lr_offset: &str) -> Effect {
+    let original = format!("0F B6 94 08 {v1_offset} 00 00");
     Effect::TogglePatches(vec![required(
         name,
-        vec![replace(
-            &format!("{original} 48 8B 4C 24 * 80 E2 01 * * * * E8"),
-            0,
-            &original,
-            "BA 01 00 00 00 90 90 90",
-        )],
+        vec![
+            // DOA6 v1.0 - v1.20
+            replace(
+                &format!("{original} 48 8B 4C 24 * 80 E2 01 * * * * E8"),
+                0,
+                &original,
+                "BA 01 00 00 00 90 90 90",
+            ),
+            // DOA6 Last Round (DOA6LR.exe)
+            replace(
+                &format!("48 0F 43 C8 0F B6 84 39 {lr_offset} 00 00 24 01 48 83 C4 20"),
+                12,
+                "24 01",
+                "B0 01",
+            ),
+        ],
     )])
 }
 
