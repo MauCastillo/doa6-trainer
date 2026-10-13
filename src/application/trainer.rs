@@ -304,7 +304,8 @@ mod tests {
     }
 
     fn cheat(id: &'static str, effect: Effect) -> Cheat {
-        Cheat { id: CheatId(id), hotkey: Hotkey::numpad(0), name: LocalizedText { es: id, en: id }, effect }
+        let text = LocalizedText { es: id, en: id };
+        Cheat { id: CheatId(id), hotkey: Hotkey::numpad(0), name: text, description: text, effect }
     }
 
     fn catalog() -> GameCatalog {

@@ -3,7 +3,7 @@ use eframe::egui::Vec2;
 use doa6_trainer::application::controller::Controller;
 use doa6_trainer::domain::doa6;
 use doa6_trainer::infrastructure::{default_hotkey_listener, default_process_finder};
-use doa6_trainer::ui::TrainerApp;
+use doa6_trainer::ui::{APP_NAME, TrainerApp};
 
 fn main() -> eframe::Result<()> {
     let catalog = doa6::catalog();
@@ -16,15 +16,15 @@ fn main() -> eframe::Result<()> {
 
     let native_options = eframe::NativeOptions {
         viewport: eframe::egui::ViewportBuilder::default()
-            .with_inner_size(Vec2::new(540.0, 720.0))
-            .with_min_inner_size(Vec2::new(480.0, 520.0))
-            .with_title("Dead or Alive 6 Plus 16 Trainer"),
+            .with_inner_size(Vec2::new(600.0, 820.0))
+            .with_min_inner_size(Vec2::new(520.0, 560.0))
+            .with_title(APP_NAME),
         ..Default::default()
     };
 
     eframe::run_native(
-        "Dead or Alive 6 Plus 16 Trainer",
+        APP_NAME,
         native_options,
-        Box::new(|_cc| Ok(Box::new(TrainerApp::new(controller)))),
+        Box::new(|cc| Ok(Box::new(TrainerApp::new(cc, controller)))),
     )
 }

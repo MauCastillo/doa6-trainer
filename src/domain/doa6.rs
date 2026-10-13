@@ -117,18 +117,30 @@ fn cheats() -> Vec<Cheat> {
             id: CheatId("1"),
             hotkey: Hotkey::numpad(1),
             name: text("Vida infinita", "Infinite Health"),
+            description: text(
+                "Mantiene llena la barra de vida del Jugador 1 durante los combates. Solo afecta al J1: el rival recibe daño con normalidad.",
+                "Keeps Player 1's health bar full during fights. Only affects P1: the opponent still takes damage normally.",
+            ),
             effect: hook_flag(PLAYER, 0, FLAG_ON, None),
         },
         Cheat {
             id: CheatId("2"),
             hotkey: Hotkey::numpad(2),
             name: text("Barra de Break al máximo", "Max Break Gauge"),
+            description: text(
+                "Mantiene tu barra de Break siempre llena para usar Break Blows y Break Holds en cualquier momento.",
+                "Keeps your Break Gauge permanently full so you can use Break Blows and Break Holds at any time.",
+            ),
             effect: hook_flag(BREAK_GAUGE, 0, FLAG_ON, None),
         },
         Cheat {
             id: CheatId("3"),
             hotkey: Hotkey::numpad(3),
             name: text("Desbloquear todos los trajes", "Unlock All Costumes"),
+            description: text(
+                "Hace seleccionables todos los trajes mientras está activo. Se revierte al desactivarlo o al cerrar el trainer.",
+                "Makes every costume selectable while enabled. Reverted when you turn it off or close the trainer.",
+            ),
             effect: Effect::TogglePatches(vec![required(
                 "costumes",
                 vec![
@@ -165,6 +177,10 @@ fn cheats() -> Vec<Cheat> {
             id: CheatId("4"),
             hotkey: Hotkey::numpad(4),
             name: text("Completar siempre los desafíos", "Always Clear Challenges"),
+            description: text(
+                "Los desafíos y objetivos de misión se dan por superados automáticamente.",
+                "Challenges and mission objectives are counted as cleared automatically.",
+            ),
             effect: Effect::TogglePatches(vec![required(
                 "challenges",
                 vec![
@@ -187,6 +203,10 @@ fn cheats() -> Vec<Cheat> {
             id: CheatId("5"),
             hotkey: Hotkey::numpad(5),
             name: text("Congelar el tiempo", "Freeze Timer"),
+            description: text(
+                "Detiene el reloj del round para que nunca termine por tiempo.",
+                "Stops the round timer so rounds never end on time-out.",
+            ),
             effect: Effect::TogglePatches(vec![
                 required(
                     "timer_tick",
@@ -220,6 +240,10 @@ fn cheats() -> Vec<Cheat> {
             id: CheatId("6"),
             hotkey: Hotkey::numpad(6),
             name: text("Puntuación máxima", "Max Score"),
+            description: text(
+                "Fija la puntuación en el máximo (99.999.999) en los modos con puntuación.",
+                "Sets the score to the maximum (99,999,999) in score-based modes.",
+            ),
             effect: Effect::TogglePatches(vec![
                 required(
                     "score",
@@ -253,30 +277,50 @@ fn cheats() -> Vec<Cheat> {
             id: CheatId("7"),
             hotkey: Hotkey::numpad(7),
             name: text("Supervelocidad", "Super Speed"),
+            description: text(
+                "Acelera el juego. Excluyente con Cámara lenta. Solo disponible en DOA6.exe v1.0–v1.20.",
+                "Speeds the game up. Mutually exclusive with Slow Motion. Only available on DOA6.exe v1.0–v1.20.",
+            ),
             effect: hook_flag(GAME_SPEED, 0, SPEED_FAST, Some(CheatId("8"))),
         },
         Cheat {
             id: CheatId("8"),
             hotkey: Hotkey::numpad(8),
             name: text("Cámara lenta", "Slow Motion"),
+            description: text(
+                "Ralentiza el juego, útil para estudiar combos y frames. Excluyente con Supervelocidad. Solo en DOA6.exe v1.0–v1.20.",
+                "Slows the game down, handy for studying combos and frames. Mutually exclusive with Super Speed. Only on DOA6.exe v1.0–v1.20.",
+            ),
             effect: hook_flag(GAME_SPEED, 0, SPEED_SLOW, Some(CheatId("7"))),
         },
         Cheat {
             id: CheatId("9"),
             hotkey: Hotkey::numpad(9),
             name: text("Vaciar la barra de Break del rival", "Empty Opponent's Break Gauge"),
+            description: text(
+                "Vacía la barra de Break del rival para que no pueda usar Break Blows ni Break Holds.",
+                "Drains the opponent's Break Gauge so they cannot use Break Blows or Break Holds.",
+            ),
             effect: hook_flag(BREAK_GAUGE, 4, FLAG_ON, None),
         },
         Cheat {
             id: CheatId("0"),
             hotkey: Hotkey::numpad(0),
             name: text("K.O. de un golpe", "One Hit K.O."),
+            description: text(
+                "Cualquier golpe que conectes deja K.O. al rival al instante.",
+                "Any hit you land knocks the opponent out instantly.",
+            ),
             effect: hook_flag(ONE_HIT_KO, 0, FLAG_ON, None),
         },
         Cheat {
             id: CheatId("C1"),
             hotkey: Hotkey::ctrl_numpad(1),
             name: text("Dinero infinito", "Infinite Money"),
+            description: text(
+                "Acción única: fija tu dinero del juego en 99.999.999. Carga tu partida antes de aplicarlo. Lo que compres queda guardado para siempre en SYSTEMDATA.",
+                "One-shot action: sets your in-game money to 99,999,999. Load your save before applying it. Anything you buy is saved permanently in SYSTEMDATA.",
+            ),
             effect: Effect::SetValue {
                 pointers: vec![
                     // DOA6 v1.0 - v1.20
@@ -301,6 +345,10 @@ fn cheats() -> Vec<Cheat> {
             id: CheatId("C2"),
             hotkey: Hotkey::ctrl_numpad(2),
             name: text("Desbloquear todos los peinados", "Unlock All Hairstyles"),
+            description: text(
+                "Hace seleccionables todos los peinados mientras está activo.",
+                "Makes every hairstyle selectable while enabled.",
+            ),
             effect: Effect::TogglePatches(vec![
                 required(
                     "hairstyles",
@@ -337,6 +385,10 @@ fn cheats() -> Vec<Cheat> {
             id: CheatId("C3"),
             hotkey: Hotkey::ctrl_numpad(3),
             name: text("Desbloquear todas las gafas", "Unlock All Glasses"),
+            description: text(
+                "Hace seleccionables todas las gafas y accesorios de cara mientras está activo.",
+                "Makes every pair of glasses and face accessory selectable while enabled.",
+            ),
             effect: Effect::TogglePatches(vec![required(
                 "glasses",
                 vec![
@@ -354,18 +406,30 @@ fn cheats() -> Vec<Cheat> {
             id: CheatId("C4"),
             hotkey: Hotkey::ctrl_numpad(4),
             name: text("Desbloquear toda la música", "Unlock All Music"),
+            description: text(
+                "Desbloquea todas las pistas de música (BGM) mientras está activo.",
+                "Unlocks every music track (BGM) while enabled.",
+            ),
             effect: unlock_flag_patch("music", "66 13", "E2 13"),
         },
         Cheat {
             id: CheatId("C5"),
             hotkey: Hotkey::ctrl_numpad(5),
             name: text("Desbloquear toda la enciclopedia", "Unlock All Encyclopedia"),
+            description: text(
+                "Desbloquea todas las entradas de la enciclopedia mientras está activo.",
+                "Unlocks every encyclopedia entry while enabled.",
+            ),
             effect: unlock_flag_patch("encyclopedia", "C0 15", "3C 16"),
         },
         Cheat {
             id: CheatId("C6"),
             hotkey: Hotkey::ctrl_numpad(6),
             name: text("Desbloquear todas las curiosidades", "Unlock All Trivia"),
+            description: text(
+                "Desbloquea todas las curiosidades (trivia) mientras está activo.",
+                "Unlocks every trivia entry while enabled.",
+            ),
             effect: unlock_flag_patch("trivia", "93 14", "0F 15"),
         },
     ]

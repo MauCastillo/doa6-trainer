@@ -2,7 +2,7 @@
 name = "doa6-trainer"
 version = "0.1.0"
 edition = "2024"
-description = "Trainer para Dead or Alive 6 (v1.0-v1.20) con interfaz gráfica"
+description = "Dead or Alive 6 trainer (v1.0-v1.20 and Last Round) with a bilingual graphical interface"
 
 [dependencies]
 anyhow = "1.0.104"

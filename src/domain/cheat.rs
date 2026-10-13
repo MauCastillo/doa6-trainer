@@ -126,6 +126,8 @@ pub struct Cheat {
     pub id: CheatId,
     pub hotkey: Hotkey,
     pub name: LocalizedText,
+    /// Explicación breve de lo que hace el truco, para la ayuda de la interfaz.
+    pub description: LocalizedText,
     pub effect: Effect,
 }
 

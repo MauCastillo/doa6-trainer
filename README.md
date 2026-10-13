@@ -1,115 +1,131 @@
-# Dead or Alive 6 Trainer (Rust)
+# DOA6 Trainer +17
 
-Trainer modular y de alto rendimiento para **Dead or Alive 6** escrito en **Rust**, diseñado bajo principios de **Arquitectura Limpia (Clean Architecture)** con interfaz gráfica moderna construida en **egui**.
+**English** · [Español](README.es.md)
 
-El trainer está optimizado tanto para **Windows 10/11 x64** nativo como para entornos **Linux bajo Wine, Proton y Lutris** (incluyendo Steam Deck).
+**DOA6 Trainer +17** is a modular, high-performance trainer for **Dead or Alive 6** (16 cheats + persistent DLC unlock), written in **Rust** following **Clean Architecture** principles, with a modern bilingual (English / Spanish) graphical interface built with **egui**.
 
----
-
-## Descargar el Ejecutable (Artefactos en GitHub)
-
-Puedes obtener el binario precompilado `doa6-trainer.exe` directamente desde el repositorio de GitHub:
-
-1. **Releases de GitHub (Recomendado):**
-   - Dirígete a la sección de **[Releases](https://github.com/MauCastillo/doa6-trainer/releases)** en GitHub.
-   - Descarga el archivo adjunto `doa6-trainer.exe` de la última versión estable (`v1.0.0`).
-2. **GitHub Actions Artifacts:**
-   - En la pestaña **Actions** de GitHub, cada commit a `master` compila automáticamente el ejecutable.
-   - Haz clic en la última ejecución de `Build & Release Artifacts` y descarga el artefacto **`doa6-trainer-windows-x64.zip`**.
+It runs natively on **Windows 10/11 x64** and on **Linux through Wine, Proton and Lutris** (Steam Deck included).
 
 ---
 
-## Versiones Compatibles del Juego
+## Download
 
-El trainer detecta automáticamente el ejecutable en memoria mediante firmas de bytes AOB (*Array of Bytes*) adaptativas y punteros relativos a RIP:
+Get the prebuilt `doa6-trainer.exe` from GitHub:
 
-| Ejecutable | Versión del Juego | Compatibilidad | Notas |
+1. **GitHub Releases (recommended):** open **[Releases](https://github.com/MauCastillo/doa6-trainer/releases)** and download `doa6-trainer.exe` from the latest stable version.
+2. **GitHub Actions artifacts:** every commit to `master` is built automatically. Open the **Actions** tab, pick the latest `Build & Release Artifacts` run and download **`doa6-trainer-windows-x64.zip`**.
+
+---
+
+## The Interface
+
+| Element | What it does |
+| :--- | :--- |
+| **Language selector** (top right) | Switches the whole interface between **English** and **Español**. The choice is saved in `%APPDATA%\doa6-trainer\settings.ini` (Windows / Wine) or `~/.config/doa6-trainer/settings.ini` (Linux). On first run the system language is used. |
+| **`?` buttons** | Every option, section and indicator has a `?` button. Hover it for a quick tooltip, or click it to expand the explanation inline (click again to collapse). |
+| **Connection status** | Amber *Waiting for the game…* until `DOA6.exe` / `DOA6LR.exe` is found, then green *Connected · PID*. Options stay disabled until the game is connected. |
+| **Global hotkeys switch** | Turns numpad shortcuts on or off. Also toggled anywhere with **`Ctrl + Shift + Home`**. |
+| **Turn all off** | Disables every active cheat at once and restores the game's original code. Shows how many cheats are active. |
+| **Option switches** | Each cheat has an animated ON/OFF switch with a text label, so the state never depends on color alone. |
+| **Apply button** | One-shot actions (Infinite Money) use an *Apply* button and briefly show *Applied* on success. |
+| **Error banner** | Errors appear in the selected language and can be dismissed. |
+
+The visual design (dark palette, purple primary color, contrast of at least 4.5:1, visible keyboard focus, no emoji icons) follows the recommendations of the [UI/UX Pro Max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) design system for gaming utilities. The colors live as tokens in `src/ui/theme.rs`.
+
+---
+
+## Supported Game Versions
+
+The trainer finds the game in memory with adaptive AOB (*Array of Bytes*) signatures and RIP-relative pointers:
+
+| Executable | Game version | Support | Notes |
 | :--- | :--- | :---: | :--- |
-| **`DOA6.exe`** | v1.0.0 a v1.20 (Steam / Lanzamiento original) | **100% (16/16 cheats)** | Incluye *Super Speed* y *Slow Motion*. |
-| **`DOA6LR.exe`** | Dead or Alive 6 Last Round (Builds 2024+) | **100% (14 runtime + Dinero + DLCs)** | Todos los trucos de salud, combate, desbloqueos, misiones, dinero infinito y DLC permanente. *(Velocidad de reloj omitida por cambios del compilador en el loop de frames)*. |
+| **`DOA6.exe`** | v1.0.0 to v1.20 (Steam / original release) | **16/16 cheats** | Includes *Super Speed* and *Slow Motion*. |
+| **`DOA6LR.exe`** | Dead or Alive 6 Last Round (2024+ builds) | **14 runtime cheats + Money + DLC** | Game speed is not available because the compiler changed the frame loop. |
 
-### Matriz de Opciones por Versión
+### Options by Version
 
-| Opción / Truco | Atajo de Teclado | `DOA6.exe` (v1.0–v1.20) | `DOA6LR.exe` (Last Round) | Tipo de Inyección |
+| Option | Hotkey | `DOA6.exe` (v1.0–v1.20) | `DOA6LR.exe` (Last Round) | Technique |
 | :--- | :---: | :---: | :---: | :--- |
-| **Salud Infinita (P1)** | `Num 1` | Sí | Sí | Code Cave + Flag P1/P2 |
-| **Break Gauge Máximo** | `Num 2` | Sí | Sí | Code Cave + Flag |
-| **Break Blow Fácil** | `Num 3` | Sí | Sí | Code Cave + Flag |
-| **One Hit KO** | `Num 4` | Sí | Sí | Code Cave + Flag |
-| **Congelar Tiempo** | `Num 5` | Sí | Sí | Code Cave Trampoline |
-| **Puntuación Máxima** | `Num 6` | Sí | Sí | Code Cave Trampoline |
-| **Completar Desafíos al Instante** | `Num 7` | Sí | Sí | Code Cave Trampoline |
-| **Desbloquear Todos los Trajes** | `Num 8` | Sí | Sí | Parche Directo (`mov al, 1`) |
-| **Desbloquear Todos los Peinados**| `Num 9` | Sí | Sí | Parche Directo (`mov al, 1`) |
-| **Desbloquear Todas las Gafas** | `Num 0` | Sí | Sí | Parche Directo (`mov al, 1`) |
-| **Desbloquear Toda la Música** | `Ctrl + Num 1` | Sí | Sí | Parche Directo (`mov al, 1`) |
-| **Desbloquear Enciclopedia** | `Ctrl + Num 2` | Sí | Sí | Parche Directo (`mov al, 1`) |
-| **Desbloquear Preguntas Trivia** | `Ctrl + Num 3` | Sí | Sí | Parche Directo (`mov al, 1`) |
-| **Dinero Infinito (99,999,999)** | `Ctrl + Num 4` | Sí | Sí | Puntero Estático Multinivel |
-| **Super Velocidad** | `Ctrl + Num 5` | Sí | No *(v1.0-v1.20)* | Reloj de frames (AOB clásico) |
-| **Cámara Lenta** | `Ctrl + Num 6` | Sí | No *(v1.0-v1.20)* | Reloj de frames (AOB clásico) |
-| **Desbloquear Todos los DLCs** | Botón GUI | Sí | Sí | Persistente en `steam_emu.ini` |
+| **Infinite Health (P1)** | `Num 1` | Yes | Yes | Code cave + flag |
+| **Max Break Gauge** | `Num 2` | Yes | Yes | Code cave + flag |
+| **Unlock All Costumes** | `Num 3` | Yes | Yes | Code patch |
+| **Always Clear Challenges** | `Num 4` | Yes | Yes | Code patch |
+| **Freeze Timer** | `Num 5` | Yes | Yes | Code patch |
+| **Max Score** | `Num 6` | Yes | Yes | Code patch |
+| **Super Speed** | `Num 7` | Yes | No | Code cave + flag (excludes Slow Motion) |
+| **Slow Motion** | `Num 8` | Yes | No | Code cave + flag (excludes Super Speed) |
+| **Empty Opponent's Break Gauge** | `Num 9` | Yes | Yes | Code cave + flag |
+| **One Hit K.O.** | `Num 0` | Yes | Yes | Code cave + flag |
+| **Infinite Money (99,999,999)** | `Ctrl + Num 1` | Yes | Yes | Multi-level static pointer (one-shot) |
+| **Unlock All Hairstyles** | `Ctrl + Num 2` | Yes | Yes | Code patch |
+| **Unlock All Glasses** | `Ctrl + Num 3` | Yes | Yes | Code patch |
+| **Unlock All Music** | `Ctrl + Num 4` | Yes | Yes | Code patch |
+| **Unlock All Encyclopedia** | `Ctrl + Num 5` | Yes | Yes | Code patch |
+| **Unlock All Trivia** | `Ctrl + Num 6` | Yes | Yes | Code patch |
+| **Unlock All DLC** | GUI switch | Yes | Yes | Persistent in `steam_emu.ini` |
 
 > [!TIP]
-> Puedes habilitar o deshabilitar todos los atajos de teclado simultáneamente pulsando **`Ctrl + Shift + Inicio`** (para evitar activaciones accidentales mientras escribes o juegas).
+> Press **`Ctrl + Shift + Home`** to enable or disable every hotkey at once, so you don't trigger cheats by accident while typing or playing.
+
+> [!NOTE]
+> Purchases made in the wardrobe after applying **Infinite Money** are saved permanently in `SYSTEMDATA`. The other unlocks only last while the cheat is on.
 
 ---
 
-## Cómo Ejecutar el Proyecto
+## Running the Trainer
 
-### 1. En Windows 11 / Windows 10
+### Windows 11 / Windows 10
 
-1. **Inicia el juego** (`DOA6.exe` o `DOA6LR.exe`) a través de Steam o tu lanzador habitual.
-2. **Ejecuta `doa6-trainer.exe`** (preferiblemente haciendo clic derecho y seleccionando **"Ejecutar como Administrador"** para otorgar privilegios `PROCESS_ALL_ACCESS`).
-3. El trainer detectará automáticamente el proceso del juego y la etiqueta cambiará a color verde: **`Juego conectado (DOA6.exe)`** o **`Juego conectado (DOA6LR.exe)`**.
-4. Activa las opciones que desees utilizando los botones interactivos o mediante los atajos del teclado numérico (`Numpad`).
-5. **Al cerrar el trainer**, todos los ganchos (*hooks*), saltos y bytes modificados en la memoria del juego se restauran inmediatamente a sus valores originales de fábrica.
+1. **Start the game** (`DOA6.exe` or `DOA6LR.exe`) from Steam or your usual launcher.
+2. **Run `doa6-trainer.exe`**, preferably with right-click → **Run as administrator** so it gets `PROCESS_ALL_ACCESS`.
+3. The status indicator turns green (**Connected · PID …**) once the game is detected.
+4. Turn options on with their switches or with the numpad hotkeys.
+5. **When you close the trainer**, every hook, jump and modified byte in game memory is restored to its original value.
 
----
+### Linux (Lutris / Wine / Proton)
 
-### 2. En Linux (Lutris / Wine / Proton)
+On Linux the game runs inside an isolated Wine prefix. The trainer must run inside the **same prefix (`WINEPREFIX`)** as the game to access its memory.
 
-En Linux, los juegos se ejecutan dentro de prefijos de Wine aislados. Para que el trainer pueda interactuar con la memoria de `DOA6LR.exe`, debe ejecutarse dentro del **mismo prefijo (`WINEPREFIX`)** que el juego.
+#### Option A: run it manually from a terminal (recommended)
 
-#### Opción A: Ejecución manual desde Terminal (Recomendado)
-
-1. Inicia el juego desde Lutris:
+1. Start the game from Lutris:
    ```bash
    lutris -d lutris:rungame/dead-or-alive-the-last-round
    ```
 
-2. Abre una terminal y lanza el trainer usando el mismo prefijo de Wine y runner de Proton:
+2. Launch the trainer with the same Wine prefix and Proton runner (adjust the paths to your setup):
    ```bash
-   WINEPREFIX="/home/wau/Games/dead-or-alive-the-last-round" \
+   WINEPREFIX="$HOME/Games/dead-or-alive-the-last-round" \
    DISPLAY=:0 \
-   /home/wau/.local/share/Steam/compatibilitytools.d/GE-Proton11-7-x86_64/files/bin/wine \
-   "/home/wau/Games/dead-or-alive-the-last-round/drive_c/Program Files/DEAD OR ALIVE 6 Last Round/doa6-trainer.exe"
+   "$HOME/.local/share/Steam/compatibilitytools.d/GE-Proton11-7-x86_64/files/bin/wine" \
+   "$HOME/Games/dead-or-alive-the-last-round/drive_c/Program Files/DEAD OR ALIVE 6 Last Round/doa6-trainer.exe"
    ```
 
-#### Opción B: Integrado automáticamente en Lutris
+#### Option B: launch it from Lutris
 
-1. Abre **Lutris**, haz clic derecho sobre el juego y selecciona **Configurar**.
-2. Ve a la pestaña **Opciones del sistema**.
-3. En la sección **Script previo al lanzamiento** (o agregándolo a una sesión concurrente), configura la llamada a `doa6-trainer.exe`.
+1. Open **Lutris**, right-click the game and choose **Configure**.
+2. Go to the **System options** tab.
+3. Under **Pre-launch script** (or as a concurrent session), add the call to `doa6-trainer.exe`.
 
 ---
 
-## Cómo Compilar para Windows
+## Building for Windows
 
-### 1. Compilación Nativa en Windows
-Instala [Rust y Cargo](https://rustup.rs) y ejecuta en PowerShell o CMD:
+### Native build on Windows
+
+Install [Rust and Cargo](https://rustup.rs) and run in PowerShell or CMD:
 ```powershell
 cargo build --release
 ```
-El ejecutable resultante estará en:
+The executable is created at:
 ```
 target\release\doa6-trainer.exe
 ```
 
-### 2. Compilación Cruzada desde Linux hacia Windows x64
-Si desarrollas en Linux (como Arch Linux, Ubuntu, Fedora, etc.):
+### Cross-compiling from Linux to Windows x64
 
-1. Instala el paquete de compilación cruzada `mingw-w64`:
+1. Install the `mingw-w64` cross-compiler:
    - **Arch Linux / Manjaro:**
      ```bash
      sudo pacman -S mingw-w64-gcc
@@ -123,75 +139,83 @@ Si desarrollas en Linux (como Arch Linux, Ubuntu, Fedora, etc.):
      sudo dnf install mingw64-gcc
      ```
 
-2. Agrega el target de Windows x64 a Rust:
+2. Add the Windows x64 target to Rust:
    ```bash
    rustup target add x86_64-pc-windows-gnu
    ```
 
-3. Compila el proyecto en modo release:
+3. Build in release mode:
    ```bash
    cargo build --release --target x86_64-pc-windows-gnu
    ```
-El binario optimizado para Windows se encontrará en:
+The optimized Windows binary is created at:
 ```
 target/x86_64-pc-windows-gnu/release/doa6-trainer.exe
 ```
 
+### Previewing the interface on Linux
+
+The interface can be run natively on Linux to check the design (it uses stub adapters, so it never connects to the game):
+```bash
+cargo run
+```
+
 ---
 
-## Ejecución de Pruebas (Tests)
+## Tests
 
-El proyecto incluye múltiples suites de pruebas automatizadas:
-
-### 1. Pruebas Unitarias de Lógica y Dominio
-Prueba el motor de firmas AOB, codificador de saltos x86_64, catalogo de trucos y orquestador contra un proceso simulado en memoria (no requiere Windows ni Wine):
+### 1. Domain and logic unit tests
+Tests the AOB signature engine, the x86_64 jump encoder, the cheat catalog, the translations and the orchestrator against a simulated in-memory process (no Windows or Wine needed):
 ```bash
 cargo test --lib
 ```
 
-### 2. Smoke Test de Integración en Wine
-Ejecuta un ejecutable falso en C (`fake_doa6.c`) dentro de Wine con las instrucciones exactas del juego y verifica el ciclo completo de inyección, activación y reversión de hooks:
+### 2. Wine integration smoke test
+Runs a fake C executable (`fake_doa6.c`) under Wine with the game's exact instructions and checks the full cycle of injecting, enabling and reverting hooks:
 ```bash
 tools/wine-smoke/run.sh
 ```
 
-### 3. Verificación en Vivo contra el Juego Real
-Se conecta al proceso real en ejecución (`DOA6.exe` o `DOA6LR.exe`), conmuta cada opción, valida respuestas y restaura todos los ganchos:
+### 3. Live check against the real game
+Connects to the running game (`DOA6.exe` or `DOA6LR.exe`), toggles every option, checks the results and restores all hooks:
 ```bash
 cargo run --example verify_live
 ```
 
-### 4. Validación Profunda a Nivel de Bytes en Memoria Virtual
-Inspecciona directamente cada una de las 19 direcciones de memoria virtual del juego antes, durante y después de activar cada truco, comprobando que los opcodes y valores coinciden byte a byte con lo esperado:
+### 4. Byte-level validation in virtual memory
+Inspects each of the game's 19 memory addresses before, during and after enabling each cheat, checking that opcodes and values match byte for byte:
 ```bash
 cargo run --example validate_modifications
 ```
 
 ---
 
-## Arquitectura del Código
+## Code Architecture
 
-El proyecto está estructurado siguiendo **Arquitectura Hexagonal / Clean Architecture**, separando estrictamente la lógica de negocio de los detalles de bajo nivel del sistema operativo y de la interfaz gráfica:
+The project follows **Hexagonal / Clean Architecture**, keeping business logic strictly separate from operating-system details and the graphical interface:
 
 ```
 src/
-├── domain/            # Lógica pura del dominio (sin dependencias del SO)
-│   ├── pattern.rs     # Escáner AOB con wildcards, capturas y plantillas
-│   ├── x86.rs         # Ensamblado y codificación de saltos x86_64 (rel32, absoluto)
-│   ├── cheat.rs       # Entidades: Cheat, Effect, Patch, Hook, GameCatalog
-│   └── doa6.rs        # Catálogo formal de los 16 trucos y sus firmas AOB
-├── application/       # Casos de uso y orquestación
-│   ├── ports.rs       # Puertos/Interfaces: GameMemory, ProcessFinder, HotkeyListener
-│   ├── patcher.rs     # Gestión de firmas AOB, parches directos y cuevas de código
-│   ├── trainer.rs     # Ciclo de vida de trucos, instalación atómica y reversión
-│   ├── steam_emu.rs   # Manipulación persistente de ini (DLCs)
-│   └── controller.rs  # Loop de control en segundo plano y atajos globales
-├── infrastructure/    # Adaptadores de infraestructura
-│   ├── windows.rs     # Implementación Win32 (OpenProcess, VirtualAllocEx, etc.)
-│   └── stub.rs        # Adaptadores simulados para entornos no-Windows / tests
-├── ui/                # Capa de presentación (egui + renderizador glow OpenGL)
-│   ├── app.rs         # Ventana principal, layout visual y binding de eventos
-│   └── theme.rs       # Estilos, colores y fuentes
-├── lib.rs             # Exportación pública modular
-└── main.rs            # Entrada de la aplicación y arranque de eframe
+├── domain/            # Pure domain logic (no OS dependencies)
+│   ├── pattern.rs     # AOB scanner with wildcards, captures and templates
+│   ├── x86.rs         # x86_64 jump encoding (rel32, absolute)
+│   ├── cheat.rs       # Entities: Cheat, Effect, Patch, Hook, GameCatalog
+│   └── doa6.rs        # The 16 cheats, their bilingual names/descriptions and AOB signatures
+├── application/       # Use cases and orchestration
+│   ├── ports.rs       # Ports/interfaces: GameMemory, ProcessFinder, HotkeyListener
+│   ├── patcher.rs     # AOB signatures, direct patches and code caves
+│   ├── trainer.rs     # Cheat lifecycle, atomic install and rollback
+│   ├── steam_emu.rs   # Persistent ini editing (DLC)
+│   └── controller.rs  # Background control loop and global hotkeys
+├── infrastructure/    # Infrastructure adapters
+│   ├── windows.rs     # Win32 implementation (OpenProcess, VirtualAllocEx, ...)
+│   └── stub.rs        # Simulated adapters for non-Windows builds and tests
+├── ui/                # Presentation layer (egui + glow OpenGL renderer)
+│   ├── app.rs         # Main window, layout and event binding
+│   ├── i18n.rs        # Languages, UI strings, sections and help texts
+│   ├── settings.rs    # Saved user preferences (language)
+│   ├── theme.rs       # Design tokens: colors, radii, text sizes
+│   └── widgets.rs     # Switch, "?" help button, hotkey chip, status pill
+├── lib.rs             # Public module exports
+└── main.rs            # Application entry point and eframe startup
 ```
