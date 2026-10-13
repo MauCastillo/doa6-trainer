@@ -27,11 +27,20 @@ pub struct TrainerApp {
     dlc_status: SteamEmuStatus,
     dlc_checked: Instant,
     dlc_error: Option<String>,
+    /// High-resolution mascot illustration texture for the header avatar.
+    mascot_texture: Option<egui::TextureHandle>,
 }
 
 impl TrainerApp {
     pub fn new(cc: &eframe::CreationContext<'_>, controller: Controller) -> Self {
         theme::apply(&cc.egui_ctx);
+        let mascot_texture = eframe::icon_data::from_png_bytes(include_bytes!("../../assets/icon_master.png"))
+            .ok()
+            .map(|icon_data| {
+                let color_image: egui::ColorImage = icon_data.into();
+                cc.egui_ctx.load_texture("mascot_icon", color_image, egui::TextureOptions::LINEAR)
+            });
+
         Self {
             controller,
             settings: Settings::load(),
@@ -40,6 +49,7 @@ impl TrainerApp {
             dlc_status: SteamEmu::status(),
             dlc_checked: Instant::now(),
             dlc_error: None,
+            mascot_texture,
         }
     }
 
@@ -123,6 +133,13 @@ impl TrainerApp {
         let title = self.controller.catalog().title;
 
         ui.horizontal(|ui| {
+            if let Some(texture) = &self.mascot_texture {
+                let size = egui::vec2(52.0, 52.0);
+                let image = egui::Image::new(texture).fit_to_exact_size(size);
+                ui.add(image).on_hover_text("DOA6 Mascot");
+                ui.add_space(4.0);
+            }
+
             ui.vertical(|ui| {
                 ui.label(RichText::new(APP_NAME).size(24.0).strong().color(theme::FOREGROUND));
                 ui.label(RichText::new(format!("{title} · {}", text.subtitle)).size(12.5).color(theme::MUTED_FOREGROUND));
